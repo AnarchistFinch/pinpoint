@@ -136,21 +136,27 @@ function updatePlayerInputs() {
         .replace(/[^a-z0-9]/g, '');
     }
 
-    function loadSongs() {
-      google.script.run
-        .withSuccessHandler(function(data) {
-          songs = data;
-          document.getElementById('status').style.display =
-  'none';
-        })
-        .withFailureHandler(function(error) {
-          document.getElementById('status').textContent =
-            'ERROR: ' + error.message;
+    async function loadSongs() {
 
-          console.error(error);
-        })
-        .getSongs();
-    }
+  try {
+
+    const response = await fetch(
+      'https://script.google.com/macros/s/AKfycbzd-Fkd-sC3GGH7GjPjm-hZgCp9VPr6hExDFlVhu6UheVli5x5K5POYyHdDDprCs7jv/exec'
+    );
+
+    songs = await response.json();
+
+    document.getElementById('status').style.display =
+      'none';
+
+  } catch (error) {
+
+    document.getElementById('status').textContent =
+      'Failed to load songs';
+
+    console.error(error);
+  }
+}
 
     function startGame() {
 
