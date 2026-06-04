@@ -3,38 +3,31 @@ function doGet() {
     .setTitle('Song Lookup');
 }
 
-function getSongs() {
-  const sheetNames = [
-    '1950s',
-    '1960s',
-    '1970s',
-    '1980s',
-    '1990s',
-    '2000s',
-    '2010s'
-  ];
+async function loadSongs() {
 
-  const ss = SpreadsheetApp.openById('16WwCjiZbRdKBF5elxIO1Gl-Ni9IGkKOkz_FcoE_HlvI');
-  const songs = [];
+  try {
 
-  sheetNames.forEach(sheetName => {
-    const sheet = ss.getSheetByName(sheetName);
+    const response =
+      await fetch('./songs.json');
 
-    if (!sheet) return;
+    songs =
+      await response.json();
 
-    const data = sheet.getDataRange().getValues();
+    document.getElementById('status')
+      .style.display = 'none';
 
-    for (let i = 0; i < data.length; i++) {
-      if (data[i][1]) {
-        songs.push({
-          number: data[i][0],
-          title: data[i][1],
-          artist: data[i][2],
-          decade: sheetName
-        });
-      }
-    }
-  });
+    console.log(
+      'Loaded',
+      songs.length,
+      'songs'
+    );
 
-  return songs;
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById('status')
+      .textContent =
+      'Failed to load songs';
+  }
 }
